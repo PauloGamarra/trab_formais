@@ -44,6 +44,17 @@ class automata:
                     afd.tabela[str(list(estado))[1:-1].replace("'","").replace(", ","|")][simbolo] = None
             afd.estados[afd.estados.index(estado)] = str(list(estado))[1:-1].replace("'","").replace(", ","|")
 
+        afd.nome = self.nome + '_D'
+
+        with open(afd.nome+'.txt', 'w') as afd_saida:
+            afd_saida.write(afd.nome+'=('+str(afd.estados).replace(' ','').replace('[','{').replace(']','}').replace("'",'')+','+str(afd.simbolos).replace('[','{').replace(']','}').replace(' ','').replace("'",'')+','+afd.inicial+','+str(afd.finais).replace(' ','').replace('[','{').replace(']','}').replace("'",'')+')')
+            afd_saida.write('\nProg')
+            for transicao in afd.tabela:
+                for simbolo in afd.simbolos:
+                    if afd.tabela[transicao][simbolo] != None:
+                        afd_saida.write('\n('+transicao+','+simbolo+')='+afd.tabela[transicao][simbolo])
+
+
         return afd
 
     def test_input(self, palavra):
@@ -115,7 +126,11 @@ def main():
                     with open(arq_palavras, 'r') as file:
 
                         for palavra in file.readlines():
-                            print(palavra.replace('\n',''), ':' ,automato.test_input(palavra.replace('\n','')))
+                            print(palavra.replace('\n',''), ': ' , end='')
+                            if automato.test_input(palavra.replace('\n','')):
+                                print('Aceita({})'.format(automato.nome))
+                            else:
+                                print('Rejeita({})'.format(automato.nome))
                         input("Pressione enter para continuar...")
 
                 #se não, o usuario pode tentar de novo ou encerrar a leitura
